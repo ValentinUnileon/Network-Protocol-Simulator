@@ -12,7 +12,6 @@ private:
     string ipAddress;
     string uniqueID;
     vector<Packet> receivedPackets;
-
 public:
 
     Node(const string& ip, const string& id) : ipAddress(ip), uniqueID(id) {}
