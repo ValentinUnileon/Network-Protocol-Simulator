@@ -20,10 +20,16 @@ public:
 
 
     Packet(const ApplicationLayer& appLayer, const TransportLayer& transportLayer, const NetworkLayer& networkLayer, const LinkLayer& linkLayer) 
-        : port(appLayer.port), sourcePort(transportLayer.sourcePort), destinationPort(transportLayer.destinationPort),
-          sourceIP(networkLayer.sourceIP), destinationIP(networkLayer.destinationIP), protocol(networkLayer.protocol),
-          sourceMAC(linkLayer.sourceMAC), destinationMAC(linkLayer.destinationMAC), frameType(linkLayer.frameType), 
-          payload(linkLayer.payload) {}
+        : port(appLayer.port), 
+        sourcePort(transportLayer.sourcePort), 
+        destinationPort(transportLayer.destinationPort),
+        sourceIP(networkLayer.sourceIP), 
+        destinationIP(networkLayer.destinationIP), 
+        protocol(networkLayer.protocol),
+        sourceMAC(linkLayer.sourceMAC),
+        destinationMAC(linkLayer.destinationMAC), 
+        frameType(linkLayer.frameType), 
+        payload(linkLayer.payload) {}
 
 
 void printInfo() const {

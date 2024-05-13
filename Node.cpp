@@ -5,21 +5,36 @@
 
 using namespace std;
 
+const string UDP = "UDP";
+const string TCP = "TCP"
 
-// Clase para representar los nodos de la red
+
 class Node {
+
 private:
     string ipAddress;
     string uniqueID;
     vector<Packet> receivedPackets;
+
 public:
 
     Node(const string& ip, const string& id) : ipAddress(ip), uniqueID(id) {}
 
 
-    void sendPacket(const Packet& packet, Node& recipient) {
+    void sendData(string data, string protocol, string destIP) { //Packet to send and node to recieve
+ 
+        if(protocol==TCP){
 
-        cout << "Enviando paquete desde el nodo " << uniqueID << " a " << recipient.getUniqueID() << endl;
+            
+
+
+        }else if(protocol==UDP){
+
+
+
+        }else{
+            print("Error: No protocol found.");
+        }
 
         recipient.receivePacket(packet);
     }
