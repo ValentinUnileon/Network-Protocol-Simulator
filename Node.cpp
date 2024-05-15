@@ -1,12 +1,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include "Packet.cpp"
 
 using namespace std;
 
 const string UDP = "UDP";
-const string TCP = "TCP"
+const string TCP = "TCP";
 
 
 class Node {
@@ -25,7 +26,9 @@ public:
  
         if(protocol==TCP){
 
-            
+            //crear objeto TCP y llamar a metodo - sendThrowTCP
+
+            cout << "llegamos a tcp";
 
 
         }else if(protocol==UDP){
@@ -33,10 +36,10 @@ public:
 
 
         }else{
-            print("Error: No protocol found.");
+            cout << "Error: No protocol found.";
         }
 
-        recipient.receivePacket(packet);
+        //recipient.receivePacket(packet);
     }
 
 
