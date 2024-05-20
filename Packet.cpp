@@ -1,3 +1,6 @@
+#ifndef PACKET_H
+#define PACKET_H
+
 #include <iostream>
 #include <string>
 
@@ -34,7 +37,7 @@ public:
         sourceMAC(linkLayer.sourceMAC),
         destinationMAC(linkLayer.destinationMAC), 
         frameType(linkLayer.frameType), 
-        payload(linkLayer.payload) {}
+        payload(appLayer.data) {}
 
 
 void printInfo() const {
@@ -56,3 +59,5 @@ void printInfo() const {
 }
 
 };
+
+#endif // PACKET_H

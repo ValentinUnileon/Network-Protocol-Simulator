@@ -1,3 +1,6 @@
+#ifndef APPLICATION_LAYER_H
+#define APPLICATION_LAYER_H
+
 #include <iostream>
 #include <string>
 using namespace std;
@@ -8,5 +11,7 @@ public:
     string data;
 
 
-    ApplicationLayer(int port, const string& data) : port(port), data(data) {}
+    ApplicationLayer(int port, string dataM) : port(port), data(dataM) {}
 };
+
+#endif 

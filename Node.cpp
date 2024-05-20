@@ -1,37 +1,44 @@
+#ifndef NODE_H
+#define NODE_H
+
+
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include "Packet.cpp"
+#include "TCP.cpp"
 
 using namespace std;
-
-const string UDP = "UDP";
-const string TCP = "TCP";
 
 
 class Node {
 
-private:
+public:
+
     string ipAddress;
     string uniqueID;
     vector<Packet> receivedPackets;
 
-public:
 
     Node(const string& ip, const string& id) : ipAddress(ip), uniqueID(id) {}
 
 
-    void sendData(string data, string protocol, string destIP) { //Packet to send and node to recieve
+    void sendData(string data, string protocol, string destIP, int port) { //Packet to send and node to recieve
  
-        if(protocol==TCP){
+        if(protocol=="TCP"){
 
             //crear objeto TCP y llamar a metodo - sendThrowTCP
+            //hay que asegurarse de que exista el nodo de recepcion para poder entrar aqui
+            TCP tcpConexion = TCP(ipAddress, destIP, uniqueID, port, data);
+            tcpConexion.createPacketTCP();
 
-            cout << "llegamos a tcp";
 
 
-        }else if(protocol==UDP){
+
+
+
+        }else if(protocol=="UDP"){
 
 
 
@@ -67,3 +74,5 @@ public:
         }
     }
 };
+
+#endif 
