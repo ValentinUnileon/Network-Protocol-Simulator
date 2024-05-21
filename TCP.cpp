@@ -32,8 +32,34 @@ public:
         // Crear el paquete con cada una de las clases
         int seqNum = 0, ackNum = 0;
 
+        bool synFlag;
+        bool ackFlag;
+        bool finFlag;
+
+        if(data=="SYN"){
+
+            bool synFlag=true;
+            bool ackFlag=false;
+            bool finFlag=false;
+
+        }else if (data=="SYN+ACK"){
+
+            bool synFlag=true;
+            bool ackFlag=true;
+            bool finFlag=false;
+
+
+        }else if (data=="FIN"){
+
+            bool synFlag=false;
+            bool ackFlag=false;
+            bool finFlag=true;
+
+
+        }
+
         ApplicationLayer appLayer(port, data);
-        TransportLayer transLayer(port, 80, data, seqNum, ackNum, true, true, true); // Flags depende del 3-way handshake
+        TransportLayer transLayer(port, 80, data, seqNum, ackNum, synFlag, ackFlag, finFlag); // Flags depende del 3-way handshake
         NetworkLayer netLayer(ipAddress, destinationIP, data.size(), "TCP");
         LinkLayer linkLayer("00:1A:2B:3C:4D:5E", "00:1A:2B:3C:4D:5E", "0x0800");
 

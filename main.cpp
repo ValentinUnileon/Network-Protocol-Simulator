@@ -15,12 +15,27 @@ int main(){
 
     if(protocol=="TCP"){
 
+        //3 handshake connexion
+
         TCP tcpConexion = TCP(nodo1, nodo2, 80);
-        Packet packet = tcpConexion.createPacketTCP("hola");
+        Packet packetSYN = tcpConexion.createPacketTCP("SYN");
         Channel fiberOptic = Channel(1000.0, 10.0, 0.00001);
 
         fiberOptic.connectNodes(&nodo1, &nodo2);
-        fiberOptic.transmitData(packet);
+        bool success = false;
+
+        while(!success){ //if the packet is lost, then there will be another try
+            success = fiberOptic.transmitData(packetSYN);                              //SYN packet
+
+        }
+
+        Packet packetSYNACK = tcpConexion.createPacketTCP("SYN+ACK");
+        
+        
+
+        fiberOptic.connectNodes(&nodo2, &nodo1);
+
+
 
 
     }

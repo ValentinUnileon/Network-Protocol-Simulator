@@ -27,6 +27,7 @@ public:
     }
 
     bool transmitData(Packet packet) {
+        
         if (node1 == nullptr || node2 == nullptr) {
             std::cerr << "Error: Nodos no conectados!" << std::endl;
             return false;
