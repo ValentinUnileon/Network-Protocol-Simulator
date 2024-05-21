@@ -7,12 +7,13 @@
 #include <vector>
 
 #include "Packet.cpp"
-#include "TCP.cpp"
+
 
 using namespace std;
 
+//Node origin, Node destination, int originPort, int destinationPort
 
-class Node {
+class NodeDevice {
 
 public:
 
@@ -21,33 +22,7 @@ public:
     vector<Packet> receivedPackets;
 
 
-    Node(const string& ip, const string& id) : ipAddress(ip), uniqueID(id) {}
-
-
-    void sendData(string data, string protocol, string destIP, int port) { //Packet to send and node to recieve
- 
-        if(protocol=="TCP"){
-
-            //crear objeto TCP y llamar a metodo - sendThrowTCP
-            //hay que asegurarse de que exista el nodo de recepcion para poder entrar aqui
-            TCP tcpConexion = TCP(ipAddress, destIP, uniqueID, port, data);
-            tcpConexion.createPacketTCP();
-
-
-
-
-
-
-        }else if(protocol=="UDP"){
-
-
-
-        }else{
-            cout << "Error: No protocol found.";
-        }
-
-        //recipient.receivePacket(packet);
-    }
+    NodeDevice(const string& ip, const string& id) : ipAddress(ip), uniqueID(id) {}
 
 
     void receivePacket(const Packet& packet) {

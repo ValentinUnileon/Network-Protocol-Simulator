@@ -11,7 +11,8 @@
 using namespace std;
 
 class Packet {
-private:
+
+public:
 
     int port;
     int sourcePort;
@@ -23,9 +24,6 @@ private:
     string destinationMAC;
     string frameType;
     string payload;
-
-public:
-
 
     Packet(const ApplicationLayer& appLayer, const TransportLayer& transportLayer, const NetworkLayer& networkLayer, const LinkLayer& linkLayer) 
         : port(appLayer.port), 
@@ -40,23 +38,27 @@ public:
         payload(appLayer.data) {}
 
 
-void printInfo() const {
+    void printInfo() const {
 
-    cout << "--------------------------" << endl;
+        cout << "--------------------------" << endl;
 
-    cout << "| Port              : " << port << endl;
-    cout << "| Source Port       : " << sourcePort << endl;
-    cout << "| Destination Port  : " << destinationPort << endl;
-    cout << "| Source IP         : " << sourceIP << endl;
-    cout << "| Destination IP    : " << destinationIP << endl;
-    cout << "| Protocol          : " << protocol << endl;
-    cout << "| Source MAC        : " << sourceMAC << endl;
-    cout << "| Destination MAC   : " << destinationMAC << endl;
-    cout << "| Frame Type        : " << frameType << endl;
-    cout << "| Payload           : " << payload << endl;
+        cout << "| Port              : " << port << endl;
+        cout << "| Source Port       : " << sourcePort << endl;
+        cout << "| Destination Port  : " << destinationPort << endl;
+        cout << "| Source IP         : " << sourceIP << endl;
+        cout << "| Destination IP    : " << destinationIP << endl;
+        cout << "| Protocol          : " << protocol << endl;
+        cout << "| Source MAC        : " << sourceMAC << endl;
+        cout << "| Destination MAC   : " << destinationMAC << endl;
+        cout << "| Frame Type        : " << frameType << endl;
+        cout << "| Payload           : " << payload << endl;
 
-    cout << "--------------------------" << endl;
-}
+        cout << "--------------------------" << endl;
+    }
+
+    int getPayloadSize(){
+        return payload.size();
+    }
 
 };
 
