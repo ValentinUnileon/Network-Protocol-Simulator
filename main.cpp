@@ -23,17 +23,42 @@ int main(){
 
         fiberOptic.connectNodes(&nodo1, &nodo2);
         bool success = false;
+        bool successSYN_ACK = false;
+        bool successACK = false;
 
-        while(!success){ //if the packet is lost, then there will be another try
+        //if the packet is lost, then there will be another try
+
+        while(!success){ 
             success = fiberOptic.transmitData(packetSYN);                              //SYN packet
+        }
+
+        //then we send the SYN+ACK packet
+
+        Packet packetSYNACK = tcpConexion.createPacketTCP("SYN+ACK");
+        fiberOptic.connectNodes(&nodo2, &nodo1);
+
+        //RETRANSMISSION
+
+        while(!successSYN_ACK){
+
+            while(!success){ 
+                cout << "retransmission of the packet";
+                success = fiberOptic.transmitData(packetSYN);                              //SYN packet
+            }
+
+            successSYN_ACK = fiberOptic.transmitData(packetSYNACK);
 
         }
 
-        Packet packetSYNACK = tcpConexion.createPacketTCP("SYN+ACK");
-        
-        
+        fiberOptic.connectNodes(&nodo1, &nodo2);
 
-        fiberOptic.connectNodes(&nodo2, &nodo1);
+        Packet packetACK = tcpConexion.createPacketTCP("ACK");
+
+        while(!successACK){
+            successACK=fiberOptic.transmitData(packetACK);
+        }
+
+        //3 - handshake finished
 
 
 

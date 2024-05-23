@@ -32,28 +32,28 @@ public:
         // Crear el paquete con cada una de las clases
         int seqNum = 0, ackNum = 0;
 
-        bool synFlag;
-        bool ackFlag;
-        bool finFlag;
+        bool synFlag=false;
+        bool ackFlag=false;
+        bool finFlag=false;
 
         if(data=="SYN"){
 
-            bool synFlag=true;
-            bool ackFlag=false;
-            bool finFlag=false;
+            synFlag=true;
+            ackFlag=false;
+            finFlag=false;
 
         }else if (data=="SYN+ACK"){
 
-            bool synFlag=true;
-            bool ackFlag=true;
-            bool finFlag=false;
+            synFlag=true;
+            ackFlag=true;
+            finFlag=false;
 
 
         }else if (data=="FIN"){
 
-            bool synFlag=false;
-            bool ackFlag=false;
-            bool finFlag=true;
+            synFlag=false;
+            ackFlag=false;
+            finFlag=true;
 
 
         }
