@@ -58,10 +58,23 @@ int main(){
             successACK=fiberOptic.transmitData(packetACK);
         }
 
+        bool successMessage=false;
+
+        string message="Hello world";
+
+        Packet packetMessage = tcpConexion.createPacketTCP(message);
+
+        while(!successMessage){
+            successMessage=fiberOptic.transmitData(packetMessage);
+        }
+
+
         //3 - handshake finished
 
 
 
+
+    }else if(protocol=="UDP"){
 
     }
 
@@ -70,5 +83,3 @@ int main(){
 
 }
 
-
-//creamos una clase
