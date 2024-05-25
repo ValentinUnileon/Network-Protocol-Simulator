@@ -71,10 +71,15 @@ int main(){
 
         //3 - handshake finished
 
-
-
+        //ahora se tienen que transmitir los paquetes normales de informacion
+        //Para ello habria que utilizar el mecanismo de flow congestion
+        //Si me da tiempo lo implementaria de la siguente manera:
+        //  -en el main tendria una lista de paqueten que tendria que enviar
+        //  -esa lista se la paso a un metodo de la clase TCP llamdado retransmissionFLowControl()
+        //  -desde ese metodo voy enviando todos los paquete de la manera mas optima y utilizando mecanismos como el fast recovery
 
     }else if(protocol=="UDP"){
+
 
     }
 

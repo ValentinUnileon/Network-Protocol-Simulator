@@ -3,17 +3,16 @@
 
 #include <iostream>
 #include <string>
-
 #include "ApplicationLayer.cpp"
 #include "LinkLayer.cpp"
 #include "NetworkLayer.cpp"
 #include "TransportLayer.cpp"
+
 using namespace std;
 
 class Packet {
 
 public:
-
     int port;
     int sourcePort;
     int destinationPort;
@@ -24,10 +23,17 @@ public:
     string destinationMAC;
     string frameType;
     string payload;
+
+    // TCP-specific attributes
     bool synFlag;
     bool ackFlag;
-    bool finFlag;    
+    bool finFlag;
 
+    // UDP-specific attributes
+    int udpLength;
+    int udpChecksum;
+
+    // Constructor for TCP packets
     Packet(const ApplicationLayer& appLayer, const TransportLayer& transportLayer, const NetworkLayer& networkLayer, const LinkLayer& linkLayer) 
         : port(appLayer.port), 
         sourcePort(transportLayer.sourcePort), 
@@ -39,10 +45,21 @@ public:
         destinationMAC(linkLayer.destinationMAC), 
         frameType(linkLayer.frameType), 
         payload(appLayer.data),
-        synFlag(transportLayer.synFlag),
-        ackFlag(transportLayer.ackFlag),
-        finFlag(transportLayer.finFlag) {}
-
+        synFlag(false),
+        ackFlag(false),
+        finFlag(false),
+        udpLength(0),
+        udpChecksum(0) {
+        
+        if (networkLayer.protocol=="TCP") {
+            synFlag = transportLayer.synFlag;
+            ackFlag = transportLayer.ackFlag;
+            finFlag = transportLayer.finFlag;
+        } else if (networkLayer.protocol=="UDP") {
+            udpLength = transportLayer.length;
+            udpChecksum = transportLayer.checksum;
+        }
+    }
 
     void printInfo() const {
         cout << "--------------------------" << endl;
@@ -57,6 +74,9 @@ public:
             cout << "| SYN Flag          : " << (synFlag ? "true" : "false") << endl;
             cout << "| ACK Flag          : " << (ackFlag ? "true" : "false") << endl;
             cout << "| FIN Flag          : " << (finFlag ? "true" : "false") << endl;
+        } else if (protocol == "UDP") {
+            cout << "| UDP Length        : " << udpLength << endl;
+            cout << "| UDP Checksum      : " << udpChecksum << endl;
         }
         
         cout << "| Source MAC        : " << sourceMAC << endl;
@@ -66,7 +86,7 @@ public:
         cout << "--------------------------" << endl;
     }
 
-    int getPayloadSize(){
+    int getPayloadSize() const {
         return payload.size();
     }
 
