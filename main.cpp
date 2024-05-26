@@ -1,6 +1,7 @@
 #include <iostream>
 #include "NodeDevice.cpp"
 #include "TCP.cpp"
+#include "UDP.cpp"
 #include "Channel.cpp"
 
 using namespace std;
@@ -11,7 +12,7 @@ int main(){
     NodeDevice nodo2 = NodeDevice("192.0", "2");
 
 
-    string protocol="TCP";
+    string protocol="UDP";
 
     if(protocol=="TCP"){
 
@@ -79,6 +80,8 @@ int main(){
         //  -desde ese metodo voy enviando todos los paquete de la manera mas optima y utilizando mecanismos como el fast recovery
 
     }else if(protocol=="UDP"){
+
+        UDP udpConexion = UDP(nodo1, nodo2, 80, 80);
 
 
     }

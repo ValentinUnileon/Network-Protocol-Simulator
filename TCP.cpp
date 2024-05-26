@@ -21,7 +21,6 @@ public:
     string ipAddress;
     string destinationIP;
     int port;
-    vector<Packet> receivedPackets;
     
 
     // Constructor corregido
