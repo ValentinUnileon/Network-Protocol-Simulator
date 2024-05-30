@@ -19,7 +19,7 @@ int main(){
         //3 handshake connexion
 
         TCP tcpConexion = TCP(nodo1, nodo2, 80);
-        Packet packetSYN = tcpConexion.createPacketTCP("SYN");
+        Packet packetSYN = tcpConexion.encapsulatePacketTCP("SYN");
         Channel fiberOptic = Channel(1000.0, 10.0, 0.00001);
 
         fiberOptic.connectNodes(&nodo1, &nodo2);
@@ -35,7 +35,7 @@ int main(){
 
         //then we send the SYN+ACK packet
 
-        Packet packetSYNACK = tcpConexion.createPacketTCP("SYN+ACK");
+        Packet packetSYNACK = tcpConexion.encapsulatePacketTCP("SYN+ACK");
         fiberOptic.connectNodes(&nodo2, &nodo1);
 
         //RETRANSMISSION
@@ -53,7 +53,7 @@ int main(){
 
         fiberOptic.connectNodes(&nodo1, &nodo2);
 
-        Packet packetACK = tcpConexion.createPacketTCP("ACK");
+        Packet packetACK = tcpConexion.encapsulatePacketTCP("ACK");
 
         while(!successACK){
             successACK=fiberOptic.transmitData(packetACK);
@@ -63,12 +63,19 @@ int main(){
 
         string message="Hello world";
 
-        Packet packetMessage = tcpConexion.createPacketTCP(message);
+        Packet packetMessage = tcpConexion.encapsulatePacketTCP(message);
 
         while(!successMessage){
             successMessage=fiberOptic.transmitData(packetMessage);
         }
 
+
+        
+
+
+        //**podemos meterle desencapsulacion tambien aunque es algo tonteria porque seria repetitivo pero podemos poder mensaje tipo 
+        //deencapsulation()
+        //** desencapsulacion finalizada**
 
         //3 - handshake finished
 
@@ -82,6 +89,30 @@ int main(){
     }else if(protocol=="UDP"){
 
         UDP udpConexion = UDP(nodo1, nodo2, 80, 80);
+        Packet packetUDP = udpConexion.createPacketUDP("Sending data");
+        Channel fiberOptic = Channel(1000.0, 10.0, 0.00001);
+
+        fiberOptic.connectNodes(&nodo1, &nodo2);
+
+        //In UDP we cant confirm the reception of the data
+        fiberOptic.transmitData(packetUDP);
+
+        bool inputAccepted = true;
+        string input;
+
+        while(inputAccepted){
+            cout << "Enter text to send: (or exit)\n";
+            cin >> input;
+            Packet packetUDP = udpConexion.createPacketUDP(input);
+            fiberOptic.transmitData(packetUDP);
+
+            if(input == "exit"){
+                break;
+            }
+
+
+        }
+
 
 
     }

@@ -6,6 +6,8 @@
 #include "NodeDevice.cpp"
 #include "Packet.cpp"
 
+using namespace std;
+
 class Channel {
 public:
     double bandwidth; // Ancho de banda en Mbps
@@ -26,29 +28,36 @@ public:
         node2 = nullptr;
     }
 
-    bool transmitData(Packet packet) {
-        
+    int transmitData(Packet packet) {
+        cout << "--------------------------" << endl;
+
         if (node1 == nullptr || node2 == nullptr) {
-            std::cerr << "Error: Nodos no conectados!" << std::endl;
-            return false;
+            cerr << "Error: Nodos no conectados!" << endl;
+            cout << "--------------------------" << endl;
+            return -1; // Indicamos un error devolviendo -1
         }
 
         double transmissionTime = calculateTransmissionTime(packet.getPayloadSize());
         double propagationDelay = calculatePropagationDelay();
 
-        std::cout << "Transmitting packet from " << node1->getIPAddress() << " to " << node2->getIPAddress() << std::endl;
-        std::cout << "Packet size: " << packet.getPayloadSize() << " bytes" << std::endl;
-        std::cout << "Transmission time: " << transmissionTime << " ms" << std::endl;
-        std::cout << "Propagation delay: " << propagationDelay << " ms" << std::endl;
+        cout << "Transmitting packet from " << node1->getIPAddress() << " to " << node2->getIPAddress() << endl;
+        cout << "Packet size: " << packet.getPayloadSize() << " bytes" << endl;
+        cout << "Transmission time: " << transmissionTime << " ms" << endl;
+        cout << "Propagation delay: " << propagationDelay << " ms" << endl;
 
         // Simulate error
         if (introduceError()) {
-            std::cerr << "Error: Packet transmission failed due to channel error." << std::endl;
-            return false;
+            cerr << "Error: Packet transmission failed due to channel error." << endl;
+            cout << "--------------------------" << endl;
+            return -1; // Indicamos un error devolviendo -1
         }
 
-        std::cout << "Packet transmitted successfully." << std::endl;
-        return true;
+        cout << "Packet transmitted successfully." << endl;
+        cout << "--------------------------" << endl;
+
+        // Calculamos el ACK del receptor
+        int ackNumber = packet.getSeqNum() + packet.getPayloadSize();
+        return ackNumber;
     }
 
 private:

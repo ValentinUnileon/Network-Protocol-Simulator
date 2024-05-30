@@ -11,7 +11,6 @@
 using namespace std;
 
 class Packet {
-
 public:
     int port;
     int sourcePort;
@@ -28,6 +27,8 @@ public:
     bool synFlag;
     bool ackFlag;
     bool finFlag;
+    int acknowledgmentNumber;
+    int seqNum;
 
     // UDP-specific attributes
     int udpLength;
@@ -48,14 +49,17 @@ public:
         synFlag(false),
         ackFlag(false),
         finFlag(false),
+        seqNum(transportLayer.sequenceNumber),
+        acknowledgmentNumber(transportLayer.acknowledgmentNumber),
         udpLength(0),
         udpChecksum(0) {
         
-        if (networkLayer.protocol=="TCP") {
+        if (networkLayer.protocol == "TCP") {
             synFlag = transportLayer.synFlag;
             ackFlag = transportLayer.ackFlag;
             finFlag = transportLayer.finFlag;
-        } else if (networkLayer.protocol=="UDP") {
+            acknowledgmentNumber = transportLayer.acknowledgmentNumber;
+        } else if (networkLayer.protocol == "UDP") {
             udpLength = transportLayer.length;
             udpChecksum = transportLayer.checksum;
         }
@@ -74,6 +78,7 @@ public:
             cout << "| SYN Flag          : " << (synFlag ? "true" : "false") << endl;
             cout << "| ACK Flag          : " << (ackFlag ? "true" : "false") << endl;
             cout << "| FIN Flag          : " << (finFlag ? "true" : "false") << endl;
+            cout << "| Acknowledgment Number : " << acknowledgmentNumber << endl;
         } else if (protocol == "UDP") {
             cout << "| UDP Length        : " << udpLength << endl;
             cout << "| UDP Checksum      : " << udpChecksum << endl;
@@ -90,6 +95,13 @@ public:
         return payload.size();
     }
 
+    int getAcknowledgmentNumber() const {
+        return acknowledgmentNumber;
+    }
+
+    int getSeqNum() const {
+        return seqNum;
+    }
 };
 
 #endif // PACKET_H
