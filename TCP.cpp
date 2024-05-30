@@ -7,6 +7,7 @@
 #include "NodeDevice.cpp"
 #include "ApplicationLayer.cpp"
 #include "TransportLayer.cpp"
+#include "Channel.cpp"
 #include "NetworkLayer.cpp"
 #include "LinkLayer.cpp"
 #include "Packet.cpp"
@@ -51,6 +52,11 @@ public:
             ackFlag = true;
             finFlag = false;
             currentAckNum = currentSeqNum + 1; // ACK the received SYN
+        } else if (data== "ACK"){
+            synFlag = false;
+            ackFlag = true;
+            finFlag = false;
+            currentAckNum = currentSeqNum + 1; // ACK the received SYN
         } else if (data == "FIN") {
             synFlag = false;
             ackFlag = false;
@@ -74,14 +80,14 @@ public:
         return packet;
     }
 
-    void congestionControl(int ack) {
+    void congestionControl(int ack, Packet packet, Channel channel) {
         if (ack == lastACK) {
             dupACKs++;
             if (dupACKs == 3) {
                 // Fast Retransmit: 3 duplicate ACKs received
-                ssthresh = std::max(cwnd / 2, 2); // Update ssthresh
-                cwnd = ssthresh + 3;              // Set cwnd for fast recovery
-                std::cout << "Fast Retransmit: Retransmitting segment " << ack << std::endl;
+                ssthresh = max(cwnd / 2, 2); // Update ssthresh
+                cwnd = ssthresh + 3;         // Set cwnd for fast recovery
+                channel.transmitData(packet);
             }
         } else {
             if (dupACKs >= 3) {
@@ -100,7 +106,7 @@ public:
     }
 
     void sendSegments() {
-        std::cout << "Sending " << cwnd << " segments." << std::endl;
+        cout << "Sending " << cwnd << " segments." << endl;
     }
 };
 

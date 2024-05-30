@@ -12,7 +12,7 @@ using namespace std;
 
 class Packet {
 public:
-    int port;
+    
     int sourcePort;
     int destinationPort;
     string sourceIP;
@@ -36,8 +36,7 @@ public:
 
     // Constructor for TCP packets
     Packet(const ApplicationLayer& appLayer, const TransportLayer& transportLayer, const NetworkLayer& networkLayer, const LinkLayer& linkLayer) 
-        : port(appLayer.port), 
-        sourcePort(transportLayer.sourcePort), 
+        : sourcePort(appLayer.port), 
         destinationPort(transportLayer.destinationPort),
         sourceIP(networkLayer.sourceIP), 
         destinationIP(networkLayer.destinationIP), 
@@ -67,7 +66,6 @@ public:
 
     void printInfo() const {
         cout << "--------------------------" << endl;
-        cout << "| Port              : " << port << endl;
         cout << "| Source Port       : " << sourcePort << endl;
         cout << "| Destination Port  : " << destinationPort << endl;
         cout << "| Source IP         : " << sourceIP << endl;
@@ -78,7 +76,8 @@ public:
             cout << "| SYN Flag          : " << (synFlag ? "true" : "false") << endl;
             cout << "| ACK Flag          : " << (ackFlag ? "true" : "false") << endl;
             cout << "| FIN Flag          : " << (finFlag ? "true" : "false") << endl;
-            cout << "| Acknowledgment Number : " << acknowledgmentNumber << endl;
+            cout << "| Ack Number        : " << acknowledgmentNumber << endl;
+            cout << "| Sequence Number   : " << seqNum << endl;
         } else if (protocol == "UDP") {
             cout << "| UDP Length        : " << udpLength << endl;
             cout << "| UDP Checksum      : " << udpChecksum << endl;

@@ -8,24 +8,24 @@ using namespace std;
 
 int main(){
 
-    NodeDevice nodo1 = NodeDevice("190.0", "1");
-    NodeDevice nodo2 = NodeDevice("192.0", "2");
+    NodeDevice node1 = NodeDevice("190.0", "1");
+    NodeDevice node2 = NodeDevice("192.0", "2");
 
 
-    string protocol="UDP";
+    string protocol="TCP";
 
     if(protocol=="TCP"){
 
         //3 handshake connexion
 
-        TCP tcpConexion = TCP(nodo1, nodo2, 80);
+        TCP tcpConexion = TCP(node1, node2, 80);
         Packet packetSYN = tcpConexion.encapsulatePacketTCP("SYN");
         Channel fiberOptic = Channel(1000.0, 10.0, 0.00001);
 
-        fiberOptic.connectNodes(&nodo1, &nodo2);
+        fiberOptic.connectNodes(&node1, &node2);
         bool success = false;
-        bool successSYN_ACK = false;
-        bool successACK = false;
+        int successSYN_ACK=-1;
+        int successACK=-1;
 
         //if the packet is lost, then there will be another try
 
@@ -36,13 +36,13 @@ int main(){
         //then we send the SYN+ACK packet
 
         Packet packetSYNACK = tcpConexion.encapsulatePacketTCP("SYN+ACK");
-        fiberOptic.connectNodes(&nodo2, &nodo1);
+        fiberOptic.connectNodes(&node2, &node1);
 
         //RETRANSMISSION
 
-        while(!successSYN_ACK){
+        while(successSYN_ACK==-1){
 
-            while(!success){ 
+            while(!success==-1){ 
                 cout << "retransmission of the packet";
                 success = fiberOptic.transmitData(packetSYN);                              //SYN packet
             }
@@ -51,23 +51,46 @@ int main(){
 
         }
 
-        fiberOptic.connectNodes(&nodo1, &nodo2);
+        fiberOptic.connectNodes(&node1, &node2);
 
         Packet packetACK = tcpConexion.encapsulatePacketTCP("ACK");
 
-        while(!successACK){
+        while(successACK==-1){
             successACK=fiberOptic.transmitData(packetACK);
         }
 
-        bool successMessage=false;
+        int successMessage=-1;
 
         string message="Hello world";
 
         Packet packetMessage = tcpConexion.encapsulatePacketTCP(message);
 
-        while(!successMessage){
+        while(successMessage==-1){
             successMessage=fiberOptic.transmitData(packetMessage);
         }
+
+
+        bool inputAccepted = true;
+        string input;
+        int ackPacket;
+
+        while(inputAccepted){
+
+            cout << "Enter text to send throw TCP protocol: (or exit)\n";
+            cin >> input;
+
+            if(input == "exit"){
+                break;
+            }
+
+            Packet packetCommunication = tcpConexion.encapsulatePacketTCP(input);
+            ackPacket = fiberOptic.transmitData(packetCommunication);
+            tcpConexion.congestionControl(ackPacket, packetCommunication, fiberOptic);
+
+
+        }
+
+
 
 
         
@@ -88,11 +111,11 @@ int main(){
 
     }else if(protocol=="UDP"){
 
-        UDP udpConexion = UDP(nodo1, nodo2, 80, 80);
-        Packet packetUDP = udpConexion.createPacketUDP("Sending data");
+        UDP udpConexion = UDP(node1, node2, 80, 80);
+        Packet packetUDP = udpConexion.createPacketUDP("Testing connection");
         Channel fiberOptic = Channel(1000.0, 10.0, 0.00001);
 
-        fiberOptic.connectNodes(&nodo1, &nodo2);
+        fiberOptic.connectNodes(&node1, &node2);
 
         //In UDP we cant confirm the reception of the data
         fiberOptic.transmitData(packetUDP);
@@ -101,14 +124,17 @@ int main(){
         string input;
 
         while(inputAccepted){
-            cout << "Enter text to send: (or exit)\n";
+            cout << "Enter text to send throw UDP protocol: (or exit)\n";
             cin >> input;
-            Packet packetUDP = udpConexion.createPacketUDP(input);
-            fiberOptic.transmitData(packetUDP);
 
             if(input == "exit"){
                 break;
             }
+
+            Packet packetUDP = udpConexion.createPacketUDP(input);
+            fiberOptic.transmitData(packetUDP);
+
+
 
 
         }
