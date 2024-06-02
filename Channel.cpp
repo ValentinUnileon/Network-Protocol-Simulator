@@ -2,7 +2,7 @@
 #define CHANNEL_H
 
 #include <iostream>
-#include <cstdlib> // Para rand()
+#include <cstdlib> // For rand()
 #include "NodeDevice.cpp"
 #include "Packet.cpp"
 
@@ -10,9 +10,9 @@ using namespace std;
 
 class Channel {
 public:
-    double bandwidth; // Ancho de banda en Mbps
-    double latency;   // Latencia en milisegundos
-    double errorRate; // Tasa de error (probabilidad de error)
+    double bandwidth; // Bandwidth in Mbps
+    double latency;   // Latency in milliseconds
+    double errorRate; // Error rate (probability of error)
     NodeDevice* node1;
     NodeDevice* node2;
 
@@ -32,9 +32,9 @@ public:
         cout << "--------------------------" << endl;
 
         if (node1 == nullptr || node2 == nullptr) {
-            cerr << "Error: Nodos no conectados!" << endl;
+            cerr << "Error: Nodes not connected!" << endl;
             cout << "--------------------------" << endl;
-            return -1; // Indicamos un error devolviendo -1
+            return -1; // Indicate an error by returning -1
         }
 
         double transmissionTime = calculateTransmissionTime(packet.getPayloadSize());
@@ -49,30 +49,30 @@ public:
         if (introduceError()) {
             cerr << "Error: Packet transmission failed due to channel error." << endl;
             cout << "--------------------------" << endl;
-            return -1; // Indicamos un error devolviendo -1
+            return -1; // Indicate an error by returning -1
         }
 
         cout << "Packet transmitted successfully." << endl;
         cout << "--------------------------" << endl;
 
-        // Calculamos el ACK del receptor
+        // Calculate the ACK from the receiver
         int ackNumber = packet.getSeqNum() + packet.getPayloadSize();
         return ackNumber;
     }
 
 private:
     double calculateTransmissionTime(size_t dataSize) {
-        // Calcula el tiempo de transmisión en función del tamaño de los datos y el ancho de banda
-        return (dataSize * 8.0) / (bandwidth * 1000.0); // Convierte Mbps a Kbps y bytes a bits
+        // Calculate transmission time based on data size and bandwidth
+        return (dataSize * 8.0) / (bandwidth * 1000.0); // Convert Mbps to Kbps and bytes to bits
     }
 
     double calculatePropagationDelay() {
-        // Devuelve la latencia del canal
+        // Return the channel latency
         return latency;
     }
 
     bool introduceError() {
-        // Simula la posibilidad de un error en la transmisión
+        // Simulate the possibility of a transmission error
         return (static_cast<double>(rand()) / RAND_MAX) < errorRate;
     }
 };

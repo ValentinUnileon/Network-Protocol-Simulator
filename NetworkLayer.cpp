@@ -6,7 +6,6 @@
 
 using namespace std;
 
-// En esta capa se añade la cabecera IPV4
 class NetworkLayer {
 public:
     string version;           // Version (IPv4)

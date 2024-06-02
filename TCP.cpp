@@ -19,6 +19,8 @@ public:
     string ipAddress;
     string destinationIP;
     int port;
+    string originMAC;
+    string destinationMAC;
 
     // Attributes for congestion control
     int cwnd;
@@ -33,7 +35,7 @@ public:
     // Constructor
     TCP(NodeDevice origin, NodeDevice destination, int originPort) 
         : ipAddress(origin.getIPAddress()), destinationIP(destination.getIPAddress()), port(originPort), 
-          cwnd(1), ssthresh(64), dupACKs(0), lastACK(0), currentSeqNum(0), currentAckNum(0) {}
+          cwnd(1), ssthresh(64), dupACKs(0), lastACK(0), currentSeqNum(0), currentAckNum(0), originMAC(origin.MAC_Address), destinationMAC(destination.MAC_Address) {}
 
     Packet encapsulatePacketTCP(string data) {
         // Determine flags and update sequence/acknowledgment numbers
@@ -72,7 +74,7 @@ public:
         ApplicationLayer appLayer(port, data);
         TransportLayer transLayer(port, 80, data, currentSeqNum, currentAckNum, synFlag, ackFlag, finFlag);
         NetworkLayer netLayer(ipAddress, destinationIP, data.size(), "TCP");
-        LinkLayer linkLayer("00:1A:2B:3C:4D:5E", "00:1A:2B:3C:4D:5E", "0x0800");
+        LinkLayer linkLayer(originMAC, destinationMAC, "0x0800");
 
         Packet packet(appLayer, transLayer, netLayer, linkLayer);
         packet.printInfo();
@@ -87,6 +89,7 @@ public:
                 // Fast Retransmit: 3 duplicate ACKs received
                 ssthresh = max(cwnd / 2, 2); // Update ssthresh
                 cwnd = ssthresh + 3;         // Set cwnd for fast recovery
+                cout << "EXECUTING FAST RETRANSMISSION" << endl;
                 channel.transmitData(packet);
             }
         } else {

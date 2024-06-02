@@ -8,11 +8,18 @@ using namespace std;
 
 int main(){
 
-    NodeDevice node1 = NodeDevice("190.0", "1");
-    NodeDevice node2 = NodeDevice("192.0", "2");
+    NodeDevice node1 = NodeDevice("190.168.100.35", "00:1A:2B:3C:4D:5E", "1");
+    NodeDevice node2 = NodeDevice("192.168.220.24","00:1A:2B:3C:4D:5E", "2");
 
 
-    string protocol="TCP";
+    string protocol;
+
+    cout << "Choose the protocol"<<endl;
+    cin >> protocol;
+
+    if(protocol != "TCP" && protocol != "UDP") {
+        cout << "Protocol not valid";
+    }
 
     if(protocol=="TCP"){
 
@@ -20,7 +27,7 @@ int main(){
 
         TCP tcpConexion = TCP(node1, node2, 80);
         Packet packetSYN = tcpConexion.encapsulatePacketTCP("SYN");
-        Channel fiberOptic = Channel(1000.0, 10.0, 0.00001);
+        Channel fiberOptic = Channel(1000.0, 10.0, 0.9);            //high rate of errors to prove it
 
         fiberOptic.connectNodes(&node1, &node2);
         bool success = false;
@@ -35,40 +42,34 @@ int main(){
 
         //then we send the SYN+ACK packet
 
-        Packet packetSYNACK = tcpConexion.encapsulatePacketTCP("SYN+ACK");
+        Packet packetSYNACK = tcpConexion.encapsulatePacketTCP("SYN+ACK");             //SYN+ACK packet
         fiberOptic.connectNodes(&node2, &node1);
 
-        //RETRANSMISSION
+        //RETRANSMISSION if the SYN+ACK packet is lost
 
         while(successSYN_ACK==-1){
 
             while(!success==-1){ 
                 cout << "retransmission of the packet";
-                success = fiberOptic.transmitData(packetSYN);                              //SYN packet
+                success = fiberOptic.transmitData(packetSYN);                           //SYN packet
             }
 
             successSYN_ACK = fiberOptic.transmitData(packetSYNACK);
 
         }
 
+        //the receptor send the confirmation ACK
+
         fiberOptic.connectNodes(&node1, &node2);
 
-        Packet packetACK = tcpConexion.encapsulatePacketTCP("ACK");
+        Packet packetACK = tcpConexion.encapsulatePacketTCP("ACK");                     //ACK packet
 
+        //RETRANSMISSION if the ACK packet is lost
         while(successACK==-1){
             successACK=fiberOptic.transmitData(packetACK);
         }
 
-        int successMessage=-1;
-
-        string message="Hello world";
-
-        Packet packetMessage = tcpConexion.encapsulatePacketTCP(message);
-
-        while(successMessage==-1){
-            successMessage=fiberOptic.transmitData(packetMessage);
-        }
-
+        //Normal transmission of data
 
         bool inputAccepted = true;
         string input;
@@ -85,29 +86,11 @@ int main(){
 
             Packet packetCommunication = tcpConexion.encapsulatePacketTCP(input);
             ackPacket = fiberOptic.transmitData(packetCommunication);
+            // congestion control al reliable data transfer 
             tcpConexion.congestionControl(ackPacket, packetCommunication, fiberOptic);
 
 
         }
-
-
-
-
-        
-
-
-        //**podemos meterle desencapsulacion tambien aunque es algo tonteria porque seria repetitivo pero podemos poder mensaje tipo 
-        //deencapsulation()
-        //** desencapsulacion finalizada**
-
-        //3 - handshake finished
-
-        //ahora se tienen que transmitir los paquetes normales de informacion
-        //Para ello habria que utilizar el mecanismo de flow congestion
-        //Si me da tiempo lo implementaria de la siguente manera:
-        //  -en el main tendria una lista de paqueten que tendria que enviar
-        //  -esa lista se la paso a un metodo de la clase TCP llamdado retransmissionFLowControl()
-        //  -desde ese metodo voy enviando todos los paquete de la manera mas optima y utilizando mecanismos como el fast recovery
 
     }else if(protocol=="UDP"){
 
@@ -133,9 +116,6 @@ int main(){
 
             Packet packetUDP = udpConexion.createPacketUDP(input);
             fiberOptic.transmitData(packetUDP);
-
-
-
 
         }
 
