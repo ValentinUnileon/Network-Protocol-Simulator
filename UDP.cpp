@@ -18,12 +18,14 @@ class UDP {
 public:
     string ipAddress;
     string destinationIP;
+    string originMAC;
+    string destinationMAC;
     int port;
     int destinationPort;  // Add this to store destination port
 
     // Corrected constructor
     UDP(NodeDevice origin, NodeDevice destination, int originPort, int destPort)
-        : ipAddress(origin.getIPAddress()), destinationIP(destination.getIPAddress()), port(originPort), destinationPort(destPort) {}
+        : ipAddress(origin.getIPAddress()), destinationIP(destination.getIPAddress()), port(originPort), destinationPort(destPort), originMAC(origin.MAC_Address), destinationMAC(destination.MAC_Address) {}
 
     Packet createPacketUDP(const string& data) {
         ApplicationLayer appLayer(port, data);
@@ -38,7 +40,7 @@ public:
 
         // Create the other layers
         NetworkLayer netLayer(ipAddress, destinationIP, udpLength, "UDP");
-        LinkLayer linkLayer("00:1A:2B:3C:4D:5E", "00:1A:2B:3C:4D:5E", "0x0800");
+        LinkLayer linkLayer(originMAC, destinationMAC, "0x0800");
 
         Packet packet(appLayer, transLayer, netLayer, linkLayer);
         packet.printInfo();
@@ -46,7 +48,7 @@ public:
         return packet;
     }
 
-private:
+
     // Function to calculate UDP checksum
     int calculateUDPChecksum(const TransportLayer& transLayer, const string& srcIP, const string& destIP, const string& data) {
         unsigned long sum = 0;

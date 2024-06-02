@@ -27,23 +27,24 @@ int main(){
 
         TCP tcpConexion = TCP(node1, node2, 80);
         Packet packetSYN = tcpConexion.encapsulatePacketTCP("SYN");
-        Channel fiberOptic = Channel(1000.0, 10.0, 0.9);            //high rate of errors to prove it
+        Channel fiberOptic = Channel(1000.0, 10.0, 0.5);            //high rate of errors to prove it
+        Channel fiberOptic1 = Channel(1000.0, 10.0, 0.5);  
 
         fiberOptic.connectNodes(&node1, &node2);
-        bool success = false;
+        int success = -1;
         int successSYN_ACK=-1;
         int successACK=-1;
 
         //if the packet is lost, then there will be another try
 
-        while(!success){ 
+        while(success==-1){ 
             success = fiberOptic.transmitData(packetSYN);                              //SYN packet
         }
 
         //then we send the SYN+ACK packet
 
         Packet packetSYNACK = tcpConexion.encapsulatePacketTCP("SYN+ACK");             //SYN+ACK packet
-        fiberOptic.connectNodes(&node2, &node1);
+        fiberOptic1.connectNodes(&node2, &node1);
 
         //RETRANSMISSION if the SYN+ACK packet is lost
 
@@ -51,10 +52,10 @@ int main(){
 
             while(!success==-1){ 
                 cout << "retransmission of the packet";
-                success = fiberOptic.transmitData(packetSYN);                           //SYN packet
+                success = fiberOptic1.transmitData(packetSYN);                           //SYN packet
             }
 
-            successSYN_ACK = fiberOptic.transmitData(packetSYNACK);
+            successSYN_ACK = fiberOptic1.transmitData(packetSYNACK);
 
         }
 

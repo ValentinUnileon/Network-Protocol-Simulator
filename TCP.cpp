@@ -108,9 +108,6 @@ public:
         lastACK = ack; // Update last received ACK
     }
 
-    void sendSegments() {
-        cout << "Sending " << cwnd << " segments." << endl;
-    }
 };
 
 #endif
